@@ -1,0 +1,62 @@
+---
+import { getCollection } from 'astro:content'
+import BaseLayout from '../layouts/BaseLayout.astro'
+
+const posts = (await getCollection('posts'))
+  .filter(post => !post.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+---
+
+<BaseLayout title="Home">
+  <h1 style="font-size: 1.875rem; font-weight: 700; margin-bottom: 2rem;">Posts</h1>
+
+  <ul style="list-style: none; display: flex; flex-direction: column; gap: 2rem;">
+    {posts.map(post => (
+      <li>
+        <a href={`/posts/${post.id}`} style="display: block; text-decoration: none; color: inherit;">
+          <article style="transition: transform 0.2s;" class="post-card">
+            <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--color-foreground); transition: color 0.2s;">
+              {post.data.title}
+            </h2>
+            <time
+              style="font-size: 0.875rem; color: var(--color-mutedForeground);"
+              datetime={post.data.date.toISOString()}
+            >
+              {post.data.date.toLocaleDateString('ko-KR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </time>
+            {post.data.description && (
+              <p style="margin-top: 0.5rem; color: var(--color-mutedForeground);">
+                {post.data.description}
+              </p>
+            )}
+            {post.data.tags?.length > 0 && (
+              <div style="margin-top: 0.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                {post.data.tags.map(tag => (
+                  <span style="font-size: 0.75rem; padding: 0.25rem 0.5rem; background: var(--color-muted); border-radius: var(--radius); color: var(--color-mutedForeground);">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </article>
+        </a>
+      </li>
+    ))}
+  </ul>
+
+  {posts.length === 0 && (
+    <p style="text-align: center; color: var(--color-mutedForeground); padding: 4rem 0;">
+      아직 글이 없습니다.
+    </p>
+  )}
+
+  <style>
+    .post-card:hover h2 {
+      color: var(--color-primary) !important;
+    }
+  </style>
+</BaseLayout>

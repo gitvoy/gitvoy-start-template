@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "theme": "minimal",
+  "site": {
+    "title": "My Blog",
+    "description": "Welcome to my blog"
+  }
+}
