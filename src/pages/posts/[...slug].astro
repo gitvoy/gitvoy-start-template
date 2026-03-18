@@ -1,0 +1,38 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<BaseLayout title={post.data.title} description={post.data.description}>
+  <article>
+    <header class="mb-8">
+      <h1 class="text-3xl font-bold">{post.data.title}</h1>
+      <time class="mt-2 block text-sm" style="color: var(--color-mutedForeground);">
+        {post.data.date.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })}
+      </time>
+      {post.data.tags.length > 0 && (
+        <div class="mt-3 flex gap-2">
+          {post.data.tags.map((tag) => (
+            <span class="rounded px-2 py-0.5 text-xs" style={`background-color: var(--color-muted); color: var(--color-mutedForeground);`}>
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
+    </header>
+    <div class="prose max-w-none">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>

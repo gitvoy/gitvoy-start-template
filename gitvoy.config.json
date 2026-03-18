@@ -1,0 +1,9 @@
+{
+  "site": {
+    "title": "My Blog",
+    "description": "A blog powered by Gitvoy",
+    "language": "ko"
+  },
+  "theme": "minimal",
+  "blogId": ""
+}

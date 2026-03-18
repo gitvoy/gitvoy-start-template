@@ -1,0 +1,42 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const posts = (await getCollection('posts'))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<BaseLayout>
+  <h1 class="mb-8 text-2xl font-bold">글 목록</h1>
+  {posts.length === 0 ? (
+    <p style="color: var(--color-mutedForeground);">아직 작성된 글이 없습니다.</p>
+  ) : (
+    <ul class="space-y-6">
+      {posts.map((post) => (
+        <li>
+          <a href={`${import.meta.env.BASE_URL}posts/${post.id}`} class="block group">
+            <h2 class="text-lg font-semibold group-hover:underline" style="color: var(--color-primary);">
+              {post.data.title}
+            </h2>
+            {post.data.description && (
+              <p class="mt-1" style="color: var(--color-mutedForeground);">{post.data.description}</p>
+            )}
+            <time class="mt-1 block text-sm" style="color: var(--color-mutedForeground);">
+              {post.data.date.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })}
+            </time>
+          </a>
+          {post.data.tags.length > 0 && (
+            <div class="mt-2 flex gap-2">
+              {post.data.tags.map((tag) => (
+                <span class="rounded px-2 py-0.5 text-xs" style={`background-color: var(--color-muted); color: var(--color-mutedForeground);`}>
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+        </li>
+      ))}
+    </ul>
+  )}
+</BaseLayout>

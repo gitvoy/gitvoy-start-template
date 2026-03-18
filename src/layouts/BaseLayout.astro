@@ -1,0 +1,42 @@
+---
+import { getConfig, generateThemeCSS } from '../lib/config';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const config = getConfig();
+const { title = config.site.title, description = config.site.description } = Astro.props;
+const themeCSS = generateThemeCSS();
+---
+
+<!doctype html>
+<html lang={config.site.language || 'ko'}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+    <style set:html={themeCSS}></style>
+  </head>
+  <body class="min-h-screen" style={`background-color: var(--color-background); color: var(--color-foreground); font-family: var(--font-sans);`}>
+    <header style="border-bottom: 1px solid var(--color-border);" class="px-6 py-4">
+      <div class="mx-auto max-w-3xl flex items-center justify-between">
+        <a href={import.meta.env.BASE_URL} class="text-xl font-bold" style="color: var(--color-foreground);">
+          {config.site.title}
+        </a>
+      </div>
+    </header>
+    <main class="mx-auto max-w-3xl px-6 py-8">
+      <slot />
+    </main>
+    <footer class="px-6 py-8 text-center text-sm" style="color: var(--color-mutedForeground);">
+      Powered by <a href="https://gitvoy.com" style="color: var(--color-primary);">Gitvoy</a>
+    </footer>
+    {config.blogId && (
+      <script src={`${import.meta.env.BASE_URL}gitvoy-tracker.js`} data-blog-id={config.blogId} defer></script>
+    )}
+  </body>
+</html>
